@@ -34,3 +34,26 @@ class BudgetManager:
             filtered_entries.append(entry)
 
         return filtered_entries
+
+    def print_summary(self, entry_type, category=None, from_date=None, to_date=None):
+
+        entries = self.get_entries(entry_type, category, from_date, to_date)
+
+        if not entries:
+            print(f"No entries found for {entry_type}")
+            return
+
+        total = sum(entry['amount'] for entry in entries)
+        count = len(entries)
+
+        category_totals = {}
+        for entry in entries:
+            cat = entry.get('category', 'Uncategorized')
+            category_totals[cat] = category_totals.get(cat, 0) + entry['amount']
+        print(f"\n===Summary for {entry_type}===")
+        print(f"Total entries: {count}")
+        print(f"Total amount: {total:.2f}\n")
+
+        print("By category:")
+        for cat, amt in category_totals.items():
+            print(f"{cat}: {amt:.2f}")

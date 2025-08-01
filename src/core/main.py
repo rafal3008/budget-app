@@ -37,13 +37,32 @@ def display_entries(entries):
     for entry in entries:
         print(f"{entry['timestamp']} | {entry['category']} | {entry['amount']} | {entry['note']} ")
 
+def summary_prompt():
+    while True:
+        entry_type = input("Type of entry(expenses/income): ").strip().lower()
+        if entry_type in ("expenses", "income"):
+            break
+        print("Invalid type. Try 'expenses' or 'income'.")
+
+    category = input("Category [optional]: ").strip() or None
+
+    from_date_str = input("From (dd.mm.yyyy)[optional]: ").strip()
+    from_date = parse(from_date_str) if from_date_str else None
+
+    to_date_str = input("To (dd.mm.yyyy)[optional]: ").strip()
+    to_date = parse(to_date_str) if to_date_str else None
+
+    return entry_type, category, from_date, to_date
+
+
 def main_menu():
 
     while True:
         print("\n====Budget-app text client - MAIN MENU====")
         print("1. Add new entry")
         print("2. Show entries(filtered)")
-        print("3. Exit")
+        print("3. Show summary report")
+        print("4. Exit")
 
         answer = input("What would you like to do?: ").strip()
 
@@ -58,6 +77,12 @@ def main_menu():
                 entries = manager.get_entries(entry_type, category, from_date, to_date)
                 display_entries(entries)
             case "3":
+                entry_type, category, from_date, to_date = summary_prompt()
+                manager.print_summary(entry_type, category, from_date, to_date)
+
+
+
+            case "4":
                 print("Exiting")
                 break
             case _:
