@@ -1,15 +1,10 @@
-from .budget import *
-from io_handler.json_handler import load_data, save_data
+from core.manager import BudgetManager
+from core.budget import BudgetEntry
 
 
 FILE_PATH = "../data/budget.json"
 
-data = load_data(FILE_PATH)
+manager = BudgetManager(FILE_PATH)
+new_entry = BudgetEntry(100, "Pranie", "25.06.2025", "Test3")
+manager.add_entry(new_entry)
 
-new_entry = BudgetEntry(100, "Pranie", "25.06.2025", "Teścik")
-
-print(data)
-
-data['expenses'].append(new_entry.to_dict())
-
-print(data)
