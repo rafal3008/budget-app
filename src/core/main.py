@@ -10,9 +10,9 @@ manager = BudgetManager(FILE_PATH)
 
 def entry_prompt():
     print("\n===Adding new entry===")
-    amount = float(input("Amount: ")) or 0
+    amount = float(input("Amount: "))
     category = input("Category: ") or "N/A"
-    date_str = input("Date: ") or str(datetime.now())
+    date_str = input("Date: ") or str(datetime.now().strftime("%m.%d.%Y"))
     date = parse(date_str).strftime("%d.%m.%Y")
     note = input("Note [optional]: ")
     return BudgetEntry(amount, category, date, note)
@@ -34,7 +34,7 @@ def display_entries(entries):
     print("\n===Found entries===")
     if not entries:
         print("No entries found.")
-    for i, entry in enumerate(entries):
+    for i, (org_id,entry) in enumerate(entries):
         print(f"[{i}] {entry['timestamp']} | {entry['category']} | {entry['amount']} | {entry['note']} ")
 
 def summary_prompt():
@@ -55,30 +55,34 @@ def summary_prompt():
     return entry_type, category, from_date, to_date
 
 def delete_prompt():
-    while True:
-        entry_type = input("Type of entry(expenses/income): ").strip().lower()
-        if entry_type in ("expenses", "income"):
-            break
-        print("Invalid type. Try 'expenses' or 'income'.")
+    entry_type, category, from_date, to_date = filter_prompt()
+    entries = manager.get_entries(entry_type, category, from_date, to_date)
 
-    entries = manager.get_entries(entry_type)
+
+    if not entries:
+        print("No entries found.")
+        return
+
     display_entries(entries)
+
     try:
         index = int(input("Enter index to delete: ").strip())
     except ValueError:
         print("Invalid index. Try again.")
         return
-    manager.delete_entry(entry_type, index)
+
+    manager.delete_entry(entry_type, index, category, from_date, to_date)
 
 def edit_prompt():
-    while True:
-        entry_type = input("Type of entry(expenses/income): ").strip().lower()
-        if entry_type in ("expenses", "income"):
-            break
-        print("Invalid type. Try 'expenses' or 'income'.")
+    entry_type, category, from_date, to_date = filter_prompt()
 
-    entries = manager.get_entries(entry_type)
+    entries = manager.get_entries(entry_type, category, from_date, to_date)
+    if not entries:
+        print("No entries found.")
+        return
+
     display_entries(entries)
+
     try:
         index = int(input("Enter index to edit: ").strip())
     except ValueError:
@@ -86,7 +90,7 @@ def edit_prompt():
         return
     print("Enter new data for entry: ")
     new_entry = entry_prompt()
-    manager.edit_entry(entry_type, index, new_entry)
+    manager.edit_entry(entry_type, index, new_entry, category, from_date, to_date)
 
 def show_balance():
     balance = manager.get_balance()

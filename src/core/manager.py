@@ -18,20 +18,23 @@ class BudgetManager:
 
         filtered_entries = []
 
-        for entry in self.data[entry_type]:
+        for id, entry in enumerate(self.data[entry_type]):
             try:
                 entry_date = parse(entry["timestamp"])
             except Exception:
                 continue
 
-            if category is not None and entry['category'] != category:
+            if category and entry['category'] != category:
                 continue
-            if from_date is not None and entry_date < from_date:
+            if from_date and entry_date < from_date:
                 continue
-            if to_date is not None and entry_date > to_date:
+            if to_date and entry_date > to_date:
                 continue
 
-            filtered_entries.append(entry)
+
+            filtered_entries.append((id, entry))
+
+
 
         return filtered_entries
 
@@ -67,40 +70,57 @@ class BudgetManager:
         for cat, amt in summary['by_category'].items():
             print(f"{cat}: {amt:.2f}")
 
-    def delete_entry(self, entry_type, index):
-            if entry_type not in self.data:
-                raise ValueError(f"{entry_type} is not a valid entry type")
+    def delete_entry(self, entry_type, index, category=None, from_date=None, to_date=None):
+        filtered_entries = self.get_entries(entry_type, category, from_date, to_date)
 
-            entries = self.data[entry_type]
-
-            if not (0 <= index < len(entries)):
-                print(f"Index {index} is out of range for {entry_type}")
-                return
-
-            entries.pop(index)
-            handler.save_data(self.file_path, self.data)
-            print('Entry deleted')
-
-    def edit_entry(self, entry_type, index, new_entry):
-        if entry_type not in self.data:
-            raise ValueError(f"{entry_type} is not a valid entry type")
-
-        entries = self.data[entry_type]
-
-        if not (0 <= index < len(entries)):
+        if not (0 <= index < len(filtered_entries)):
             print(f"Index {index} is out of range for {entry_type}")
+            return
+
+        org_index = filtered_entries[index][0]
+        self.data[entry_type].pop(org_index)
+        handler.save_data(self.file_path, self.data)
+        print(f"Deleted {entry_type} entry {index}.")
+
+    def edit_entry(self, entry_type, index, new_entry, category=None, from_date=None, to_date=None):
+        filtered_entries = self.get_entries(entry_type, category, from_date, to_date)
+
+        if not (0 <= index < len(filtered_entries)):
+            print(f"Index {index} is out of range for filtered results")
             return False
 
-        entries[index] = new_entry.to_dict()
+        original_index = filtered_entries[index][0]
+        self.data[entry_type][original_index] = new_entry.to_dict()
         handler.save_data(self.file_path, self.data)
         print('Entry edited successfully')
         return True
+
 
     def get_balance(self):
         expenses = sum(entry['amount'] for entry in self.data.get('expenses', []))
         income = sum(entry['amount'] for entry in self.data.get('income', []))
         return income - expenses
 
+    def get_filtered_entries(self, entry_type, category=None, from_date=None, to_date=None):
+        if entry_type not in self.data:
+            raise ValueError(f"{entry_type} is not a valid entry type")
 
+        filtered_entries = []
+        for id, entry in enumerate(self.data[entry_type]):
+            try:
+                entry_date = parse(entry["timestamp"])
+            except Exception:
+                continue
+
+            if category is not None and entry['category'] != category:
+                continue
+            if from_date is not None and entry_date < from_date:
+                continue
+            if to_date is not None and entry_date > to_date:
+                continue
+
+            filtered_entries.append((id, entry))
+
+        return filtered_entries
 
 
