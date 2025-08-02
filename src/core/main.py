@@ -34,8 +34,8 @@ def display_entries(entries):
     print("\n===Found entries===")
     if not entries:
         print("No entries found.")
-    for entry in entries:
-        print(f"{entry['timestamp']} | {entry['category']} | {entry['amount']} | {entry['note']} ")
+    for i, entry in enumerate(entries):
+        print(f"[{i}] {entry['timestamp']} | {entry['category']} | {entry['amount']} | {entry['note']} ")
 
 def summary_prompt():
     while True:
@@ -54,15 +54,56 @@ def summary_prompt():
 
     return entry_type, category, from_date, to_date
 
+def delete_prompt():
+    while True:
+        entry_type = input("Type of entry(expenses/income): ").strip().lower()
+        if entry_type in ("expenses", "income"):
+            break
+        print("Invalid type. Try 'expenses' or 'income'.")
+
+    entries = manager.get_entries(entry_type)
+    display_entries(entries)
+    try:
+        index = int(input("Enter index to delete: ").strip())
+    except ValueError:
+        print("Invalid index. Try again.")
+        return
+    manager.delete_entry(entry_type, index)
+
+def edit_prompt():
+    while True:
+        entry_type = input("Type of entry(expenses/income): ").strip().lower()
+        if entry_type in ("expenses", "income"):
+            break
+        print("Invalid type. Try 'expenses' or 'income'.")
+
+    entries = manager.get_entries(entry_type)
+    display_entries(entries)
+    try:
+        index = int(input("Enter index to edit: ").strip())
+    except ValueError:
+        print("Invalid index. Try again.")
+        return
+    print("Enter new data for entry: ")
+    new_entry = entry_prompt()
+    manager.edit_entry(entry_type, index, new_entry)
+
+def show_balance():
+    balance = manager.get_balance()
+    print(f"Current balance: {balance:.2f}")
+
 
 def main_menu():
 
     while True:
         print("\n====Budget-app text client - MAIN MENU====")
         print("1. Add new entry")
-        print("2. Show entries(filtered)")
+        print("2. Show entries(with filters)")
         print("3. Show summary report")
-        print("4. Exit")
+        print("4. Delete entry")
+        print("5. Edit entry")
+        print("6. Show current balance")
+        print("7. Exit")
 
         answer = input("What would you like to do?: ").strip()
 
@@ -79,10 +120,13 @@ def main_menu():
             case "3":
                 entry_type, category, from_date, to_date = summary_prompt()
                 manager.print_summary(entry_type, category, from_date, to_date)
-
-
-
             case "4":
+                delete_prompt()
+            case "5":
+                edit_prompt()
+            case "6":
+                show_balance()
+            case "7":
                 print("Exiting")
                 break
             case _:

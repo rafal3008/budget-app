@@ -50,7 +50,7 @@ class BudgetManager:
         return {
             "total_amount": total,
             "entries_count": count,
-            "by category": category_totals
+            "by_category": category_totals
         }
     def print_summary(self, entry_type, category=None, from_date=None, to_date=None):
         summary = self.get_summary(entry_type, category, from_date, to_date)
@@ -66,3 +66,41 @@ class BudgetManager:
         print("By category:")
         for cat, amt in summary['by_category'].items():
             print(f"{cat}: {amt:.2f}")
+
+    def delete_entry(self, entry_type, index):
+            if entry_type not in self.data:
+                raise ValueError(f"{entry_type} is not a valid entry type")
+
+            entries = self.data[entry_type]
+
+            if not (0 <= index < len(entries)):
+                print(f"Index {index} is out of range for {entry_type}")
+                return
+
+            entries.pop(index)
+            handler.save_data(self.file_path, self.data)
+            print('Entry deleted')
+
+    def edit_entry(self, entry_type, index, new_entry):
+        if entry_type not in self.data:
+            raise ValueError(f"{entry_type} is not a valid entry type")
+
+        entries = self.data[entry_type]
+
+        if not (0 <= index < len(entries)):
+            print(f"Index {index} is out of range for {entry_type}")
+            return False
+
+        entries[index] = new_entry.to_dict()
+        handler.save_data(self.file_path, self.data)
+        print('Entry edited successfully')
+        return True
+
+    def get_balance(self):
+        expenses = sum(entry['amount'] for entry in self.data.get('expenses', []))
+        income = sum(entry['amount'] for entry in self.data.get('income', []))
+        return income - expenses
+
+
+
+
