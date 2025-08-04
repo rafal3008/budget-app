@@ -1,5 +1,11 @@
 const app = document.getElementById('app');
 
+const dummyEntries = [
+    {id: 1, amount: 5.0, category: 'Other', date: '2025-08-01', note: 'pranie'},
+    {id: 2, amount: 30.0, category: 'Food', date: '2025-08-02', note: 'obiad na miescie'},
+    {id: 3, amount: 150.0, category: 'Transport', date: '2025-08-03', note:'karta miejska'}
+];
+
 function createButton(label, onClick) {
     const btn = document.createElement('button');
     btn.textContent = label;
@@ -79,10 +85,47 @@ function renderAddEntryForm(){
         renderMainMenu();
     });
 
+
     app.appendChild(form);
 
 
 
+}
+
+function renderEntriesList(){
+    app.innerHTML = '';
+
+    const title = document.createElement('h2');
+    title.textContent = 'All Entries';
+    app.appendChild(title);
+
+    const table = document.createElement('table');
+    const header = document.createElement('tr');
+
+    ['ID', 'Amount', 'Category', 'Date', 'Note'].forEach((column) => {
+        const th = document.createElement('th');
+        th.textContent = column;
+        header.appendChild(th);
+    });
+    table.appendChild(header);
+
+    dummyEntries.forEach(entry => {
+        const row = document.createElement('tr');
+
+        [entry.id, entry.amount, entry.category, entry.date, entry.note].forEach(value => {
+            const td = document.createElement('td');
+            td.textContent = value;
+            row.appendChild(td);
+        });
+
+        table.appendChild(row);
+
+    });
+
+    app.appendChild(table);
+
+    const backBtn = createButton('Back to menu', () => renderMainMenu());
+    app.appendChild(backBtn);
 }
 
 function renderMainMenu() {
@@ -94,7 +137,7 @@ function renderMainMenu() {
 
     const options = [
         { label: 'Add new entry', action: renderAddEntryForm },
-        { label: 'Show entries (with filters)', action: () => alert('To be implemented') },
+        { label: 'Show entries (with filters)', action: renderEntriesList },
         { label: 'Show summary report', action: () => alert('To be implemented') },
         { label: 'Delete entry', action: () => alert('To be implemented') },
         { label: 'Edit entry', action: () => alert('To be implemented') },
