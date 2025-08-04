@@ -9,6 +9,12 @@ FILE_PATH = "../data/budget.json"
 manager = BudgetManager(FILE_PATH)
 
 def entry_prompt():
+    """
+    Prompt the user to enter details for a new budget entry.
+
+    Returns:
+        BudgetEntry: An object containing the entered amount, category, date, and note.
+    """
     print("\n===Adding new entry===")
     amount = float(input("Amount: "))
     category = input("Category: ") or "N/A"
@@ -18,6 +24,12 @@ def entry_prompt():
     return BudgetEntry(amount, category, date, note)
 
 def filter_prompt():
+    """
+    Prompt the user for filtering criteria for budget entries.
+
+    Returns:
+        tuple: (entry_type: str, category: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime])
+    """
     print("\n===Filtering entries=== ")
     entry_type = input("Type of entry(expenses/income): ").strip().lower() or "expenses"
     category = input("Category [optional]: ").strip() or None
@@ -31,6 +43,13 @@ def filter_prompt():
     return entry_type, category, from_date, to_date
 
 def display_entries(entries):
+    """
+    Display a list of budget entries with their index, date, category, amount, and note.
+
+    Args:
+        entries (list): List of tuples containing (original_id, entry_data).
+    """
+
     print("\n===Found entries===")
     if not entries:
         print("No entries found.")
@@ -38,6 +57,12 @@ def display_entries(entries):
         print(f"[{i}] {entry['timestamp']} | {entry['category']} | {entry['amount']} | {entry['note']} ")
 
 def summary_prompt():
+    """
+    Prompt the user for criteria to generate a summary report.
+
+    Returns:
+        tuple: (entry_type: str, category: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime])
+    """
     while True:
         entry_type = input("Type of entry(expenses/income): ").strip().lower()
         if entry_type in ("expenses", "income"):
@@ -55,6 +80,11 @@ def summary_prompt():
     return entry_type, category, from_date, to_date
 
 def delete_prompt():
+    """
+    Prompt the user to filter and select a budget entry to delete.
+    Displays entries based on filters and deletes the selected one.
+    """
+
     entry_type, category, from_date, to_date = filter_prompt()
     entries = manager.get_entries(entry_type, category, from_date, to_date)
 
@@ -74,6 +104,10 @@ def delete_prompt():
     manager.delete_entry(entry_type, index, category, from_date, to_date)
 
 def edit_prompt():
+    """
+    Prompt the user to filter and select a budget entry to edit.
+    Displays entries based on filters, then updates the selected entry with new data.
+    """
     entry_type, category, from_date, to_date = filter_prompt()
 
     entries = manager.get_entries(entry_type, category, from_date, to_date)
@@ -93,6 +127,9 @@ def edit_prompt():
     manager.edit_entry(entry_type, index, new_entry, category, from_date, to_date)
 
 def show_balance():
+    """
+    Display the current balance calculated from all budget entries.
+    """
     balance = manager.get_balance()
     print(f"Current balance: {balance:.2f}")
 
