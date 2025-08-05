@@ -2,3 +2,4 @@
 .venv/
 *.db
 tests/
+__init__.py
