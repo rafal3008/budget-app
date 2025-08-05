@@ -99,7 +99,81 @@ function renderEntriesList(){
     title.textContent = 'All Entries';
     app.appendChild(title);
 
+    const filterSelection = document.createElement('div');
+
+    //filter by category
+    const categoryLabel = document.createElement('label');
+    categoryLabel.textContent = 'Category: ';
+    const categoryInput = document.createElement('input');
+    categoryInput.type = 'text';
+    categoryInput.placeholder = 'i.e. food, transport';
+
+    //filter from date
+    const dateFromLabel = document.createElement('label');
+    dateFromLabel.textContent = 'Date from: ';
+    const dateFromInput = document.createElement('input');
+    dateFromInput.type = 'date';
+
+    //filter to date
+    const dateToLabel = document.createElement('label');
+    dateToLabel.textContent = 'Date to: ';
+    const dateToInput = document.createElement('input');
+    dateToInput.type = 'date';
+
+    const filterButton = createButton('Filter', () => {
+        const category = categoryInput.value.trim().toLowerCase();
+        const dateFrom = dateFromInput.value;
+        const dateTo = dateToInput.value;
+
+        const filtered = dummyEntries.filter(entry => {
+            const entryDate = entry.date;
+            const entryCategory = entry.category.toLowerCase();
+
+            const categoryMatch = !category || entryCategory.includes(category);
+            const dateFromMatch = !dateFrom || entryDate >= dateFrom;
+            const dateToMatch = !dateTo || entryDate <= dateTo;
+
+            return categoryMatch && dateFromMatch && dateToMatch;
+        });
+        renderEntriesTable(filtered);
+    });
+
+    const clearButton = createButton('Clear', () => {
+        categoryInput.value = '';
+        dateFromInput.value = '';
+        dateToInput.value = '';
+
+        renderEntriesTable(dummyEntries);
+    });
+
+    filterSelection.appendChild(categoryLabel);
+    filterSelection.appendChild(categoryInput);
+    filterSelection.appendChild(document.createElement('br'));
+
+    filterSelection.appendChild(dateFromLabel);
+    filterSelection.appendChild(dateFromInput);
+    filterSelection.appendChild(document.createElement('br'));
+
+    filterSelection.appendChild(dateToLabel);
+    filterSelection.appendChild(dateToInput);
+    filterSelection.appendChild(document.createElement('br'));
+
+    filterSelection.appendChild(filterButton);
+    filterSelection.appendChild(clearButton);
+
+    app.appendChild(filterSelection);
+    app.appendChild(document.createElement('br'));
+
+    renderEntriesTable(dummyEntries);
+}
+
+
+function renderEntriesTable(entries) {
+    const oldTable = document.getElementById('entries-table');
+    if(oldTable) oldTable.remove();
+
     const table = document.createElement('table');
+    table.id = 'entries-table';
     const header = document.createElement('tr');
 
     ['ID', 'Amount', 'Category', 'Date', 'Note'].forEach((column) => {
@@ -109,7 +183,7 @@ function renderEntriesList(){
     });
     table.appendChild(header);
 
-    dummyEntries.forEach(entry => {
+    entries.forEach(entry => {
         const row = document.createElement('tr');
 
         [entry.id, entry.amount, entry.category, entry.date, entry.note].forEach(value => {
@@ -119,13 +193,9 @@ function renderEntriesList(){
         });
 
         table.appendChild(row);
-
     });
 
     app.appendChild(table);
-
-    const backBtn = createButton('Back to menu', () => renderMainMenu());
-    app.appendChild(backBtn);
 }
 
 function renderMainMenu() {
