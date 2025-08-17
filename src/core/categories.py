@@ -4,23 +4,21 @@ class Categories(Enum):
     FOOD = 'Food'
     BILLS = 'Bills'
     CLOTHING = 'Clothing'
-    ENTERTAIN = 'Entertainment'
+    ENTERTAINMENT = 'Entertainment'
     TRANSPORT = 'Transport'
     ACTIVITIES = 'Activities'
     OTHER = 'Other'
 
     @classmethod
-    def from_string(cls, string):
-        if not string:
+    def from_string(cls, str):
+        if not str:
             raise ValueError(f"Category is empty")
 
         for member in cls:
-            if member.value.lower() == string.strip().lower():
+            if member.value.lower() == str.strip().lower():
                 return member
 
-        allowed = ", ".join(member.value for member in cls)
-        raise ValueError(f"{string} is not a valid category\n"
-                         f"Allowed categories: {allowed}")
+        raise ValueError(f"Category is invalid: {str}")
 
     def __str__(self):
         return self.value

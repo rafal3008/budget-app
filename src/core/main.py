@@ -4,7 +4,7 @@ from dateutil.parser import parse
 from datetime import datetime
 
 
-FILE_PATH = "../data/budget.json"
+FILE_PATH = "./data/budget.json"
 
 manager = BudgetManager(FILE_PATH)
 
@@ -18,7 +18,7 @@ def entry_prompt():
     print("\n===Adding new entry===")
     amount = float(input("Amount: "))
     category = input("Category: ") or "N/A"
-    date_str = input("Date: ") or str(datetime.now().strftime("%m.%d.%Y"))
+    date_str = input("Date: ") or str(datetime.now().strftime("%d.%m.%Y"))
     date = parse(date_str).strftime("%d.%m.%Y")
     note = input("Note [optional]: ")
     return BudgetEntry(amount, category, date, note)
