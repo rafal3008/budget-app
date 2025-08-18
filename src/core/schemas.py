@@ -20,6 +20,7 @@ class EntryBase(_CommonModel):
     amount: Decimal
     date: date
     category: str
+    note: Optional[str] = None
 
 
     @field_validator("amount", mode="before")
@@ -44,6 +45,7 @@ class UpdateEntry(EntryBase):
     amount: Optional[Decimal] = None
     date: Optional[date] = None
     category: Optional[str] = None
+    note: Optional[str] = None
 
 
     @field_validator("amount", mode="before")

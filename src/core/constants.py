@@ -3,6 +3,9 @@ ALL CONSTANTS I CAN THINK OF - I SAW IT IN ANOTHER PROJECT, AND SAID - WHY NOT?
 """
 from decimal import Decimal
 
+#File paths
+DATA_PATH: str = "data/budget.json"
+
 #AMOUNT
 MIN_AMOUNT: Decimal =  Decimal("0.01")
 MAX_AMOUNT: Decimal = Decimal("1000000")
@@ -36,3 +39,8 @@ ALLOW_FUTURE_DATE: bool = False
 
 ERR_DATE_FORMAT: str = f"Date format must be {DATE_FORMAT}"
 ERR_DATE_FUTURE_NOT_ALLOWED: str = "Cannot add future expenses"
+
+#for API pagination
+DEFAULT_PAGE = 1
+DEFAULT_LIMIT = 50
+MAX_LIMIT = 500
