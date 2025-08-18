@@ -10,14 +10,14 @@ MAX_AMOUNT: Decimal = Decimal("1000000")
 AMOUNT_DECIMAL_PLACES: int = 2
 
 ERR_AMOUNT_POSITIVE: str = "Amount must be positive"
-ERR_AMOUNT_RANGE: str = (f"Amount should be between {MIN_AMOUNT} and {MAX_AMOUNT}")
+ERR_AMOUNT_RANGE: str = f"Amount should be between {MIN_AMOUNT} and {MAX_AMOUNT}"
 
 ERR_AMOUNT_DECIMALS = str = "The amount should have a maximum of two decimal places"
 
 
 #Category
 #See categories.py for allowed categories
-ERR_CATEGORY_INVALID: str = "Categorie invalid. Allowed categories: "
+ERR_CATEGORY_INVALID: str = "Category invalid. Allowed categories: "
 
 
 #Date

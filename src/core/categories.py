@@ -14,7 +14,7 @@ class Categories(Enum):
         if not isinstance(string, str):
             raise ValueError(f"Category must be a string")
 
-        raw_str = string.strip().lower
+        raw_str = string.strip().lower()
 
         alias_map = {
             "food": cls.FOOD,
@@ -43,7 +43,7 @@ class Categories(Enum):
             if member.value.lower() == raw_str:
                 return member
 
-        raise ValueError(f"Category is invalid: {str}")
+        raise ValueError(f"Category is invalid: {raw_str}")
 
     def __str__(self):
         return self.value

@@ -57,6 +57,8 @@ def validate_amount(amount):
     if x < MIN_AMOUNT or x > MAX_AMOUNT:
         raise ValueError(ERR_AMOUNT_RANGE)
 
+    return x
+
 def validate_date(date_str):
     """
     VALIDATES DATE
@@ -89,7 +91,7 @@ def validate_date(date_str):
     if not ALLOW_FUTURE_DATE and val_date > date.today():
         raise ValueError(ERR_DATE_FUTURE_NOT_ALLOWED)
 
-    return val_date.strftime("%Y-%m-%d")
+    return val_date
 
 
 def validate_category(category):

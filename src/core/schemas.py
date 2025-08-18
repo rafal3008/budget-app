@@ -1,4 +1,7 @@
 from pydantic import BaseModel, field_validator, ConfigDict
+from typing import Optional
+from decimal import Decimal
+from datetime import date
 from src.core.rules.validators import (
 validate_amount,
 validate_category,
@@ -14,8 +17,8 @@ class EntryBase(_CommonModel):
     """
     Common filed for every budget-entry
     """
-    amount: str
-    date: str
+    amount: Decimal
+    date: date
     category: str
 
 
@@ -38,7 +41,31 @@ class CreateEntry(EntryBase):
     pass
 
 class UpdateEntry(EntryBase):
-    pass
+    amount: Optional[Decimal] = None
+    date: Optional[date] = None
+    category: Optional[str] = None
+
+
+    @field_validator("amount", mode="before")
+    @classmethod
+    def _amount(cls, amt):
+        if amt is None:
+            return amt
+        return validate_amount(amt)
+
+    @field_validator("date", mode="before")
+    @classmethod
+    def _date(cls, dt):
+        if dt is None:
+            return dt
+        return validate_date(dt)
+
+    @field_validator("category", mode="before")
+    @classmethod
+    def _category(cls, cat):
+        if cat is None:
+            return cat
+        return validate_category(cat)
 
 class Entry(EntryBase):
     """

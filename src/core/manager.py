@@ -1,4 +1,4 @@
-from io_handler import json_handler as handler
+from src.io_handler import json_handler as handler
 from dateutil.parser import parse
 
 class BudgetManager:
