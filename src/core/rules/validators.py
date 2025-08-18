@@ -69,7 +69,7 @@ def validate_date(date_str):
     elif isinstance(date_str, datetime):
         dt = date_str
     elif isinstance(date_str, str):
-        raw_date = datetime.stip()
+        raw_date = date_str.strip()
         parsed_date = None
         for fmt in ALLOWED_DATE_INPUT_FORMATS:
             try:
