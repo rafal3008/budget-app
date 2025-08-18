@@ -1,6 +1,7 @@
 from datetime import date
 
 from src.io_handler import json_handler
+from src.core.categories import Categories
 from src.core.constants import DATA_PATH
 
 
@@ -13,14 +14,14 @@ def check_data_shape(data):
     return data
 
 
-def _load():
+def load():
     try:
         data = json_handler.load_data(DATA_PATH)
     except Exception:
         data = {"entries": []}
     return check_data_shape(data)
 
-def _save(data):
+def save(data):
     json_handler.save_data(DATA_PATH, data)
 
 
@@ -41,10 +42,15 @@ def match_filters(entry, category, from_date, to_date):
     """
     Check if the entry matches the given filters.
     """
-    if category is not None and entry.get("category") != category:
-        return False
+    if category is not None:
+        try:
+            cat = Categories.from_string(str(category).strip())
+            if entry.get("category") != cat.value:
+                return False
+        except Exception:
+            return False
     try:
-        entry_date = date.fromisoformat(entry.get["date"])
+        entry_date = date.fromisoformat(entry.get("date"))
     except Exception:
         return False
 

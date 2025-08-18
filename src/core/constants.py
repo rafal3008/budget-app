@@ -40,6 +40,10 @@ ALLOW_FUTURE_DATE: bool = False
 ERR_DATE_FORMAT: str = f"Date format must be {DATE_FORMAT}"
 ERR_DATE_FUTURE_NOT_ALLOWED: str = "Cannot add future expenses"
 
+# Notes
+NOTE_MAX_LEN: int = 250
+ERR_NOTE_TOO_LONG: str = f"Note cannot be longer than {NOTE_MAX_LEN} characters"
+
 #for API pagination
 DEFAULT_PAGE = 1
 DEFAULT_LIMIT = 50

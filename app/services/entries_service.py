@@ -10,10 +10,10 @@ from app.services.utilities import (
     find_index )
 from src.core.schemas import Entry, CreateEntry, UpdateEntry
 
-def listEntries(category, from_date, to_date, page, limit):
+def list_entries(category, from_date, to_date, page, limit):
     data = _load()
     rows = [e for e in data["entries"] if match_filters(e, category, from_date, to_date)]
-
+    rows.sort(key=lambda e: e.get("date",""), reverse=True)
     start = (page-1) * limit
     end = start + limit
 
@@ -27,13 +27,13 @@ def listEntries(category, from_date, to_date, page, limit):
             amount=Decimal(e["amount"]),
             date=date.fromisoformat(e["date"]),
             category=e["category"],
-            note=e.get("note", "")
+            note=e.get("note")
         )
         result.append(entry)
     return result
 
 
-def create_entry(entry: CreateEntry):
+def create_entry(entry):
     data = _load()
 
     new_entry = {
@@ -52,15 +52,15 @@ def create_entry(entry: CreateEntry):
         amount=Decimal(new_entry["amount"]),
         date=date.fromisoformat(new_entry["date"]),
         category=new_entry["category"],
-        note=new_entry.get("note", "")
+        note=new_entry.get("note")
     )
 
-def update_entry(entry_id: str, entry: UpdateEntry):
+def update_entry(entry_id, entry):
     data = _load()
 
     index = find_index(data["entries"], entry_id)
     if index is None:
-        raise ValueError(f"Entry with ID {entry_id} not found.")
+        return None
 
     existing_entry = data["entries"][index]
 
@@ -80,13 +80,13 @@ def update_entry(entry_id: str, entry: UpdateEntry):
         amount=Decimal(existing_entry["amount"]),
         date=date.fromisoformat(existing_entry["date"]),
         category=existing_entry["category"],
-        note=existing_entry.get("note", "")
+        note=existing_entry.get("note")
     )
 
 def delete_entry(entry_id):
     data = _load()
 
-    index = find_index(data, entry_id)
+    index = find_index(data["entries"], entry_id)
     if index is None:
         return False
     data["entries"].pop(index)
@@ -96,7 +96,7 @@ def delete_entry(entry_id):
 def get_entry_or_404(entry_id):
     data = _load()
 
-    index = find_index(data, entry_id)
+    index = find_index(data["entries"], entry_id)
     if index is None:
         return None
 
@@ -107,6 +107,6 @@ def get_entry_or_404(entry_id):
         amount=Decimal(entry["amount"]),
         date=date.fromisoformat(entry["date"]),
         category=entry["category"],
-        note=entry.get("note", "")
+        note=entry.get("note")
     )
 

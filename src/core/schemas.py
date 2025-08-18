@@ -2,6 +2,7 @@ from pydantic import BaseModel, field_validator, ConfigDict
 from typing import Optional
 from decimal import Decimal
 from datetime import date
+from src.core.constants import NOTE_MAX_LEN, ERR_NOTE_TOO_LONG
 from src.core.rules.validators import (
 validate_amount,
 validate_category,
@@ -38,6 +39,18 @@ class EntryBase(_CommonModel):
     def _category(cls, value):
         return validate_category(value)
 
+    @field_validator("note", mode="before")
+    @classmethod
+    def _note(cls, note):
+        if note is None:
+            return note
+
+        s = str(note).stip()
+        if len(s) > NOTE_MAX_LEN:
+            raise ValueError(ERR_NOTE_TOO_LONG)
+        return s
+
+
 class CreateEntry(EntryBase):
     pass
 
@@ -68,6 +81,17 @@ class UpdateEntry(EntryBase):
         if cat is None:
             return cat
         return validate_category(cat)
+
+    @field_validator("note", mode="before")
+    @classmethod
+    def _note(cls, note):
+        if note is None:
+            return note
+
+        s = str(note).stip()
+        if len(s) > NOTE_MAX_LEN:
+            raise ValueError(ERR_NOTE_TOO_LONG)
+        return s
 
 class Entry(EntryBase):
     """

@@ -2,9 +2,9 @@ from datetime import date
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query
 
-from  src.core.schemas import Entry, CreateEntry, UpdateEntry
+from src.core.schemas import Entry, CreateEntry, UpdateEntry
 from app.services.entries_service import (
-    listEntries,
+    list_entries,
     create_entry,
     update_entry,
     delete_entry,
@@ -20,10 +20,10 @@ def get_entries(
     from_date: Optional[date] = Query(None, description="Filter entries from this date"),
     to_date: Optional[date] = Query(None, description="Filter entries to this date"),
     page: int = Query(DEFAULT_PAGE, ge=1, description="Page number for pagination"),
-    limit: int = Query(DEFAULT_LIMIT, le=MAX_LIMIT, description="Number of entries per page")
+    limit: int = Query(DEFAULT_LIMIT, ge=1, le=MAX_LIMIT, description="Number of entries per page")
 ):
 
-    return listEntries(category, from_date, to_date, page, limit)
+    return list_entries(category, from_date, to_date, page, limit)
 
 @router.post("", response_model=Entry, status_code=201)
 def post_entry(entry: CreateEntry):
@@ -47,4 +47,4 @@ def put_entry(entry_id: str, entry: UpdateEntry):
 def delete_entry_by_id(entry_id: str):
     if not delete_entry(entry_id):
         raise HTTPException(status_code=404, detail="Entry not found")
-    return {"detail": "Entry deleted successfully"}
+    return None
